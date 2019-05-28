@@ -6,9 +6,9 @@ import parse from "autosuggest-highlight/parse";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-import Popper from "@material-ui/core/Popper";
+// import Popper from "@material-ui/core/Popper";
 import { makeStyles } from "@material-ui/core/styles";
-import { prototype } from "events";
+// import { prototype } from "events";
 
 let suggestions = [
   { label: "Afghanistan" },
@@ -143,9 +143,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function IntegrationAutosuggest() {
+function IntegrationAutosuggest(props) {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  // const [anchorEl, setAnchorEl] = React.useState(null);
   const [state, setState] = React.useState({
     single: "",
     popper: ""
@@ -167,18 +167,8 @@ function IntegrationAutosuggest() {
       [name]: newValue
     });
   };
-  const onSuggestionSelected = (
-    vent,
-    { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
-  ) => {
-    console.log(vent, {
-      suggestion,
-      suggestionValue,
-      suggestionIndex,
-      sectionIndex,
-      method
-    });
-  };
+  const onSuggestionSelected = props.onSuggestionSelected;
+
   const autosuggestProps = {
     renderInputComponent,
     suggestions: stateSuggestions,
@@ -196,8 +186,8 @@ function IntegrationAutosuggest() {
         inputProps={{
           classes,
           id: "react-autosuggest-simple",
-          label: "Country",
-          placeholder: "Search a country (start with a)",
+          label: props.searchLabel,
+          placeholder: props.searchPlaceholder,
           value: state.single,
           onChange: handleChange("single")
         }}
@@ -238,8 +228,30 @@ suggestions = [
   { blog: "What Passes For Wisdom", id: 9043821949686794118 }
 ];
 
+const onSuggestionSelected = (
+  vent,
+  { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }
+) => {
+  console.log(vent, {
+    suggestion,
+    suggestionValue,
+    suggestionIndex,
+    sectionIndex,
+    method
+  });
+};
+
 const MyAutoSuggest = props => {
-  return IntegrationAutosuggest(props);
+  let newprops = Object.assign(
+    {
+      onSuggestionSelected,
+      searchLabel: "Blog",
+      searchPlaceholder: "Enter blog pattern"
+    },
+    Object.create(props)
+  );
+
+  return IntegrationAutosuggest(newprops);
 };
 
 export default MyAutoSuggest;
