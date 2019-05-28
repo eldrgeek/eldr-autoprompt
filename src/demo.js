@@ -8,8 +8,9 @@ import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
 import Popper from "@material-ui/core/Popper";
 import { makeStyles } from "@material-ui/core/styles";
+import { prototype } from "events";
 
-const suggestions = [
+let suggestions = [
   { label: "Afghanistan" },
   { label: "Aland Islands" },
   { label: "Albania" },
@@ -67,8 +68,8 @@ function renderInputComponent(inputProps) {
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.label, query);
-  const parts = parse(suggestion.label, matches);
+  const matches = match(suggestion.blog, query);
+  const parts = parse(suggestion.blog, matches);
 
   return (
     <MenuItem selected={isHighlighted} component="div">
@@ -89,14 +90,18 @@ function renderSuggestion(suggestion, { query, isHighlighted }) {
 function getSuggestions(value) {
   const inputValue = deburr(value.trim()).toLowerCase();
   const inputLength = inputValue.length;
+  const matchString = value
+    .toLowerCase()
+    .split(" ")
+    .join(".*");
   let count = 0;
 
   return inputLength === 0
     ? []
     : suggestions.filter(suggestion => {
         const keep =
-          count < 5 &&
-          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+          count < 5 && suggestion.blog.toLowerCase().match(matchString);
+        //suggestion.blog.slice(0, inputLength).toLowerCase() === inputValue;
 
         if (keep) {
           count += 1;
@@ -107,7 +112,7 @@ function getSuggestions(value) {
 }
 
 function getSuggestionValue(suggestion) {
-  return suggestion.label;
+  return suggestion.blog;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -212,7 +217,7 @@ function IntegrationAutosuggest() {
   );
 }
 
-const blogList = [
+suggestions = [
   { blog: "70 Years WTF", id: 809323243837962619 },
   { blog: "Notes to myself", id: 5674376634552534587 },
   { blog: "Mike’s Memories", id: 3726451002764432380 },
